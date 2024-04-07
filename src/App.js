@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
+import JSZip from 'jszip';
 
 function App() {
   const [messages, setMessages] = useState([]);
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    const reader = new FileReader();
 
-    reader.onload = (event) => {
-      const contents = event.target.result;
-      const parsedMessages = parseTextFile(contents);
+    try {
+      const zip = await JSZip.loadAsync(file);
+      const textFile = await zip.file('_chat.txt').async('string');
+      const parsedMessages = parseTextFile(textFile);
       setMessages(parsedMessages);
-    };
-
-    reader.readAsText(file);
+    } catch (error) {
+      console.error('Error reading zip file:', error);
+    }
   };
 
   const parseTextFile = (text) => {
@@ -44,8 +45,8 @@ function App() {
 
   return (
     <div>
-      <h1>WhatsApp Text File Reader</h1>
-      <input type="file" accept=".txt" onChange={handleFileUpload} />
+      <h1>WhatsApp Chat Reader</h1>
+      <input type="file" accept=".zip" onChange={handleFileUpload} />
       <ul>
         {messages.map((message, index) => (
           <li key={index}>
