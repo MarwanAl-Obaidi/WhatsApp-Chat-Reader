@@ -14,14 +14,29 @@ function App() {
       const senderName = zipFileName.split(' - ')[1];
 
       const textFile = await zip.file('_chat.txt').async('string');
-      const parsedMessages = parseTextFile(textFile, senderName);
+      const imageFiles = await extractImageFiles(zip);
+
+      const parsedMessages = parseTextFile(textFile, senderName, imageFiles);
       setMessages(parsedMessages);
     } catch (error) {
       console.error('Error reading zip file:', error);
     }
   };
 
-  const parseTextFile = (text, senderName) => {
+  const extractImageFiles = async (zip) => {
+    const imageFiles = [];
+
+    for (const fileName in zip.files) {
+      if (fileName.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        const imageData = await zip.file(fileName).async('base64');
+        imageFiles.push({ fileName, data: `data:image/jpeg;base64,${imageData}` });
+      }
+    }
+
+    return imageFiles;
+  };
+
+  const parseTextFile = (text, senderName, imageFiles) => {
     const parsedMessages = [];
 
     const lines = text.split('\n');
@@ -32,12 +47,26 @@ function App() {
       if (match && match.length === 4) {
         const time = match[1];
         const sender = match[2];
-        const message = match[3];
+        let message = match[3];
+
+        const attachmentRegex = /<attached:\s(.*?)>/;
+        const attachmentMatch = attachmentRegex.exec(message);
+        let imageUrl = null;
+
+        if (attachmentMatch && attachmentMatch.length === 2) {
+          const attachmentFileName = attachmentMatch[1].trim();
+          const imageFile = imageFiles.find(file => file.fileName === attachmentFileName);
+          if (imageFile) {
+            imageUrl = imageFile.data;
+            message = message.replace(attachmentMatch[0], '');
+          }
+        }
 
         const messageObject = {
           time,
           sender: sender === senderName ? sender : 'Me',
-          message
+          message,
+          imageUrl
         };
 
         parsedMessages.push(messageObject);
@@ -56,6 +85,7 @@ function App() {
           <div key={index} className={`chat-bubble ${message.sender === 'Me' ? 'chat-right' : 'chat-left'}`}>
             <p className="sender">{message.sender}</p>
             <p className="time">{message.time}</p>
+            {message.imageUrl && <img src={message.imageUrl} alt="Attached" />}
             <p className="message">{message.message}</p>
           </div>
         ))}
