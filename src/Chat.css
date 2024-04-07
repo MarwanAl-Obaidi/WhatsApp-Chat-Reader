@@ -1,0 +1,34 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.chat-left {
+    align-self: flex-start;
+}
+
+.chat-right {
+    align-self: flex-end;
+}
+
+.chat-bubble {
+    background-color: #DCF8C6;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+    margin: 5px;
+}
+
+.chat-bubble p {
+    margin: 0;
+}
+
+.sender {
+    font-weight: bold;
+}
+
+.message {
+    margin-top: 5px;
+}

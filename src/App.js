@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import JSZip from 'jszip';
 
+import './Chat.css'; // Import CSS file for styling chat bubbles
+
 function App() {
   const [messages, setMessages] = useState([]);
 
@@ -47,14 +49,16 @@ function App() {
     <div>
       <h1>WhatsApp Chat Reader</h1>
       <input type="file" accept=".zip" onChange={handleFileUpload} />
-      <ul>
+      <div className="chat-container">
         {messages.map((message, index) => (
-          <li key={index}>
-            <p><strong>{message.sender}</strong>: {message.message}</p>
-            <p><em>{message.date}</em></p>
-          </li>
+          <div key={index} className={message.sender === 'Me' ? 'chat-right' : 'chat-left'}>
+            <div className="chat-bubble">
+              <p className="sender">{message.sender}</p>
+              <p className="message">{message.message}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
