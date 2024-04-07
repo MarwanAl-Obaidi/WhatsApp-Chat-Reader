@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
 function App() {
+  const [messages, setMessages] = useState([]);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const contents = event.target.result;
+      const parsedMessages = parseTextFile(contents);
+      setMessages(parsedMessages);
+    };
+
+    reader.readAsText(file);
+  };
+
+  const parseTextFile = (text) => {
+    // Needs proper implementation, otherwise works fine.
+    const messages = text.split('\n');
+    return messages;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>WhatsApp Text File Reader</h1>
+      <input type="file" accept=".txt" onChange={handleFileUpload} />
+      <ul>
+        {messages.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+      </ul>
     </div>
   );
 }
