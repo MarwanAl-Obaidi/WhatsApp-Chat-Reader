@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import JSZip from 'jszip';
-
-import './Chat.css'; // Import CSS file for styling chat bubbles
+import './Chat.css';
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -11,15 +10,18 @@ function App() {
 
     try {
       const zip = await JSZip.loadAsync(file);
+      const zipFileName = file.name.replace('.zip', '');
+      const senderName = zipFileName.split(' - ')[1];
+
       const textFile = await zip.file('_chat.txt').async('string');
-      const parsedMessages = parseTextFile(textFile);
+      const parsedMessages = parseTextFile(textFile, senderName);
       setMessages(parsedMessages);
     } catch (error) {
       console.error('Error reading zip file:', error);
     }
   };
 
-  const parseTextFile = (text) => {
+  const parseTextFile = (text, senderName) => {
     const parsedMessages = [];
 
     const lines = text.split('\n');
@@ -34,7 +36,7 @@ function App() {
 
         const messageObject = {
           date,
-          sender,
+          sender: sender === senderName ? sender : 'Me',
           message
         };
 
