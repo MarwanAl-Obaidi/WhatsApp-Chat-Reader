@@ -6,14 +6,16 @@
 
 .chat-left {
     align-self: flex-start;
+    background-color: #DCF8C6;
 }
 
 .chat-right {
     align-self: flex-end;
+    background-color: #C7CEEA;
 }
 
 .chat-bubble {
-    background-color: #DCF8C6;
+    /* background-color: #DCF8C6; */
     padding: 10px;
     border-radius: 10px;
     max-width: 100%;
@@ -31,4 +33,9 @@
 
 .message {
     margin-top: 5px;
+}
+
+.time {
+    font-size: 12px;
+    color: #888;
 }

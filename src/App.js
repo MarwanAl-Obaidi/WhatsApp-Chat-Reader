@@ -30,12 +30,12 @@ function App() {
       const regex = /\[(.*?)\]\s(.*?):\s(.*)/;
       const match = regex.exec(line);
       if (match && match.length === 4) {
-        const date = match[1];
+        const time = match[1];
         const sender = match[2];
         const message = match[3];
 
         const messageObject = {
-          date,
+          time,
           sender: sender === senderName ? sender : 'Me',
           message
         };
@@ -53,11 +53,10 @@ function App() {
       <input type="file" accept=".zip" onChange={handleFileUpload} />
       <div className="chat-container">
         {messages.map((message, index) => (
-          <div key={index} className={message.sender === 'Me' ? 'chat-right' : 'chat-left'}>
-            <div className="chat-bubble">
-              <p className="sender">{message.sender}</p>
-              <p className="message">{message.message}</p>
-            </div>
+          <div key={index} className={`chat-bubble ${message.sender === 'Me' ? 'chat-right' : 'chat-left'}`}>
+            <p className="sender">{message.sender}</p>
+            <p className="time">{message.time}</p>
+            <p className="message">{message.message}</p>
           </div>
         ))}
       </div>
